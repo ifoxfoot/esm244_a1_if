@@ -1,0 +1,15 @@
+---
+title: "Assignment One"
+author: "Iris Foxfoot"
+date: "1/17/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+#read in packages
+library(tidyverse)
+library(here)
+library(patchwork)
+library(lubridate)
+```
