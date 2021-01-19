@@ -1,5 +1,5 @@
 ---
-title: "Assignment One"
+title: "Task One"
 author: "Iris Foxfoot"
 date: "1/17/2021"
 output: html_document
@@ -20,7 +20,7 @@ library(patchwork)
 library(lubridate)
 ```
 
-## Task 1: Sierra Amphibians
+## Sierra Amphibians
 
 ```{r}
 #Read in data using here()
@@ -41,7 +41,27 @@ group_by(Year, amphibian_life_stage) %>%
 
 
 #graph counts using ggplot2
-frog_year <- ggplot(data = yellow_legged_count, aes(x = Year, y = n, color = amphibian_life_stage)) + geom_line() + theme(legend.position = c(0.15, 0.8), legend.title = element_blank(), legend.background = element_rect(fill="lightblue", size=0.5, linetype="solid", colour ="black"), panel.background = element_rect(fill = "white"), panel.grid.major = element_line(size = 0.5, linetype = 'solid', colour = "grey"), panel.grid.minor = element_line(size = 0.25, linetype = 'solid', colour = "grey")) + labs(y = "Number of Frogs", title = "Figure 1")
+frog_year <- ggplot(data = yellow_legged_count, 
+                    aes(x = Year, y = n, color = amphibian_life_stage)) + 
+  geom_line() + 
+  theme(
+    legend.position = c(0.15, 0.8), 
+    legend.title = element_blank(), 
+    legend.background = element_rect(
+      fill="lightblue", 
+      size=0.5, 
+      linetype="solid", 
+      colour ="black"), 
+    panel.background = element_rect(fill = "white"), 
+    panel.grid.major = element_line(
+      size = 0.5, 
+      linetype = 'solid', 
+      colour = "grey"), 
+    panel.grid.minor = element_line(
+      size = 0.25, 
+      linetype = 'solid', 
+      colour = "grey")) + 
+  labs(y = "Number of Frogs", title = "Figure 1")
 
 frog_year
 
@@ -61,11 +81,23 @@ top_five_lake <- yellow_legged_lake %>%
   slice_max(frog_count, n = 5)
 
 #graph using fact_reorder() to sort columns
-frog_lake <- ggplot(data = top_five_lake, aes(x= fct_reorder(lake, frog_count), y = frog_count)) + 
+frog_lake <- ggplot(data = top_five_lake, 
+                    aes(x= fct_reorder(lake, frog_count), y = frog_count)) + 
   geom_col(fill = "dodgerblue") + 
   labs(x = element_blank(), y = "Frog Count") + 
   coord_flip() + 
-  theme(panel.background = element_rect(fill = "white"), panel.grid.major.y = element_blank(), panel.grid.major.x = element_line(size = 0.5, linetype = 'solid', colour = "grey"), panel.grid.minor.x = element_line(size = 0.25, linetype = 'solid', colour = "grey")) + labs(title = "Figure 2")
+  theme(
+    panel.background = element_rect(fill = "white"), 
+    panel.grid.major.y = element_blank(), 
+    panel.grid.major.x = element_line(
+      size = 0.5, 
+      linetype = 'solid', 
+      colour = "grey"), 
+    panel.grid.minor.x = element_line(
+      size = 0.25, 
+      linetype = 'solid', 
+      colour = "grey")) + 
+  labs(title = "Figure 2")
 
 frog_lake
 ```
@@ -73,7 +105,14 @@ frog_lake
 ```{r, fig.width=10}
 #combine using patchwork
 combined_graph <- (frog_year | frog_lake)
-combined_graph + plot_annotation(caption = "These two figures depict yellow-legged frogs in the southern sierra nevada. Figure 1 shows the total number of yellow-legged frogs in the study per year \nand broken up by life stage. Figure 2 shows the top five lakes with the most subadult and adult yellow-legged frogs. The data was collected in the southern \nsierra nevada from 1995-2002 (Napp et al.)", theme = theme(plot.caption = element_text(size = 10, hjust = 0, vjust = 0)))
+combined_graph + 
+  plot_annotation(caption = 
+                    "These two figures depict yellow-legged frogs in the southern sierra nevada. Figure 1 shows the total number of yellow-legged frogs in the study per year \nand broken up by life stage. Figure 2 shows the top five lakes with the most subadult and adult yellow-legged frogs. The data was collected in the southern \nsierra nevada from 1995-2002 (Napp et al.)", 
+                  theme = theme(plot.caption = element_text(
+                    size = 10, 
+                    hjust = 0, 
+                    vjust = 0)))
 ```
 
 **Data Citation** Knapp, R.A., C. Pavelka, E.E. Hegeman, and T.C. Smith. 2020. The Sierra Lakes Inventory Project: Non-Native fish and community composition of lakes and ponds in the Sierra Nevada, California ver 2. Environmental Data Initiative. https://doi.org/10.6073/pasta/d835832d7fd00d9e4466e44eea87fab3
+
