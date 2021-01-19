@@ -1,0 +1,69 @@
+---
+title: 'Task Two: PCA'
+author: "Iris Foxfoot"
+date: "1/18/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+	echo = TRUE,
+	message = FALSE, #Set warnings and messages to not show
+	warning = FALSE
+)
+#Load packages
+library(tidyverse)
+library(here)
+library(readxl)
+library(ggfortify)
+library(lubridate)
+library(janitor)
+```
+
+## Introduction
+I collected this data in the Menz-Guassa Conservation Area in the highlands of Ethiopia from January-May 2018 as part of my work with the Guassa Gelada Research Project. The data is composed of point counts for birds of prey, Gelada monkeys, and Ethiopian wolves, and was collected with the goal of seeing how Geladas impact foraging behavior of animals that eat rodents. This project was inspired by [this](https://academic.oup.com/jmammal/article/96/1/129/864820) study by Dr. Venkataraman that found Ethiopian wolves hunt rodents more successfully in the presence of Geladas. Here I will only explore how animal presence/absences are correlated with the presence/absence of other species. I will not consider environmental factors like vegetation type or time of day. 
+
+## PCA Plot
+```{r}
+#read in data stored then clean names and replace NA value with 0
+sky_focals <- read_excel(here("Sky_Focals_Complete.xls")) %>% 
+  clean_names() %>% 
+  mutate_all(~replace(., is.na(.), 0))
+
+#Limit to animal observations
+sky_focals_limited <- sky_focals %>% 
+  select(number_gels, aug, taw, harrier_sp, e_wolves)
+
+#Change Everything to Numeric!
+sky_focals_limited$number_gels <- as.numeric(sky_focals_limited$number_gels)
+sky_focals_limited$aug <- as.numeric(sky_focals_limited$aug)
+sky_focals_limited$taw <-as.numeric(sky_focals_limited$taw)
+sky_focals_limited$harrier_sp <- as.numeric(sky_focals_limited$harrier_sp)
+sky_focals_limited$e_wolves <- as.numeric(sky_focals_limited$e_wolves)
+
+#PCA
+sky_focal_pca <- sky_focals_limited %>%
+  scale() %>% #I used the scale function to limit the impact that Geladas would have on the variance. It is normal to have 300+ Geladas in a troop, but not normal for birds of prey to group together.
+  prcomp()
+
+#call to view
+sky_focal_pca
+
+#PCA bi-plot
+autoplot(sky_focal_pca, 
+         data = sky_focals,
+         loadings = TRUE, 
+         loadings.label = TRUE,
+         loadings.label.hjust = 1.2) +
+  theme_classic() +
+  labs(caption = "Principle Component Analysis Bi-plot Showing Species Associations in the Highlands of Ethiopia. Data and Graph: Iris foxfoot") 
+```
+
+## Conclusions
+- This Biplot only accounts for about half of the variance. I excluded weather, date, vegetation type, and time of day, so those are places I would look to explain more variance.
+
+- The number of Gelada monkeys (number_gels) and the number of Ethiopian wolves (e_wolves) are positively correlated
+
+- Geladas are moderately negatively correlated with harrier species (harrier_sp) and Augur Buzzards (aug), while Geladas and Tawny Eagles (taw) are more negatively correlated.
+
+- Augur Buzzards and harrier species are very negatively correlated
