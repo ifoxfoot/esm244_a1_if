@@ -37,7 +37,7 @@ yellow_legged <- sierra_amphibians %>%
 #Count number of frogs in each lifecylce category per year
 yellow_legged_count <- yellow_legged %>%  
 group_by(Year, amphibian_life_stage) %>%
-  count()
+  count(wt = amphibian_number)
 
 
 #graph counts using ggplot2
@@ -45,13 +45,7 @@ frog_year <- ggplot(data = yellow_legged_count,
                     aes(x = Year, y = n, color = amphibian_life_stage)) + 
   geom_line() + 
   theme(
-    legend.position = c(0.15, 0.8), 
-    legend.title = element_blank(), 
-    legend.background = element_rect(
-      fill="lightblue", 
-      size=0.5, 
-      linetype="solid", 
-      colour ="black"), 
+    legend.position = "none",
     panel.background = element_rect(fill = "white"), 
     panel.grid.major = element_line(
       size = 0.5, 
@@ -61,7 +55,8 @@ frog_year <- ggplot(data = yellow_legged_count,
       size = 0.25, 
       linetype = 'solid', 
       colour = "grey")) + 
-  labs(y = "Number of Frogs", title = "Figure 1")
+  labs(y = "Number of Frogs", title = "Figure 1") + 
+  facet_wrap(~amphibian_life_stage, scales = "free")
 
 frog_year
 
@@ -76,7 +71,7 @@ yellow_legged_lake <- yellow_legged %>%
 
 #make a subset of the five lakes with the most frogs
 top_five_lake <- yellow_legged_lake %>% 
-  count(lake) %>% 
+  count(lake, wt = amphibian_number) %>% 
   rename(frog_count = n) %>% 
   slice_max(frog_count, n = 5)
 
@@ -104,7 +99,7 @@ frog_lake
 
 ```{r, fig.width=10}
 #combine using patchwork
-combined_graph <- (frog_year | frog_lake)
+combined_graph <- (frog_year / frog_lake)
 combined_graph + 
   plot_annotation(caption = 
                     "These two figures depict yellow-legged frogs in the southern sierra nevada. Figure 1 shows the total number of yellow-legged frogs in the study per year \nand broken up by life stage. Figure 2 shows the top five lakes with the most subadult and adult yellow-legged frogs. The data was collected in the southern \nsierra nevada from 1995-2002 (Napp et al.)", 
